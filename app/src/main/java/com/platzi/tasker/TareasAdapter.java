@@ -1,6 +1,8 @@
 package com.platzi.tasker;
 
 import android.content.Context;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +18,7 @@ import java.util.Map;
 /**
  * Created by andres on 25/06/15.
  */
-public class TareasAdapter extends BaseAdapter {
+public class TareasAdapter extends RecyclerView.Adapter<TareaViewHolder> {
 
     List<Map<String,Object>> datos;
     Context context;
@@ -31,31 +33,24 @@ public class TareasAdapter extends BaseAdapter {
         this.ensamblador = LayoutInflater.from(this.context);
     }
 
+
     @Override
-    public int getCount() {
+    public TareaViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = ensamblador.inflate(R.layout.cell_tarea, parent, false);
+        return new TareaViewHolder(itemView);
+    }
+
+    @Override
+    public void onBindViewHolder(TareaViewHolder holder, int position) {
+        Map<String, Object> dato = (Map<String, Object>) this.datos.get(position);
+        holder.titulo.setText(dato.get("titulo").toString());
+        holder.descripcion.setText(dato.get("descripcion").toString());
+        holder.hecho.setChecked((boolean)dato.get("hecho"));
+    }
+
+    @Override
+    public int getItemCount() {
         return this.datos.size();
     }
 
-    @Override
-    public Object getItem(int position) {
-        return this.datos.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        Map<String, Object> dato = (Map<String, Object>) getItem(position);
-        View item = ensamblador.inflate(R.layout.cell_tarea, null);
-        TextView titulo = (TextView) item.findViewById(R.id.txtTitulo);
-        TextView descripcion = (TextView) item.findViewById(R.id.txtDescripcion);
-        CheckBox hecho = (CheckBox) item.findViewById(R.id.chkHecho);
-        titulo.setText(dato.get("titulo").toString());
-        descripcion.setText(dato.get("descripcion").toString());
-        hecho.setChecked((boolean)dato.get("hecho"));
-        return item;
-    }
 }

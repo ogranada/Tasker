@@ -2,6 +2,8 @@ package com.platzi.tasker;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -14,14 +16,20 @@ import java.util.Map;
 
 public class Inicio extends ActionBarActivity {
 
-    private ListView lista;
+    private RecyclerView lista;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inicio);
-        this.lista = (ListView) findViewById(R.id.lvTareas);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
+        this.lista = (RecyclerView) findViewById(R.id.lvTareas);
         this.lista.setAdapter(new TareasAdapter(this, getDatos()));
+
+        this.lista.setLayoutManager(layoutManager);
     }
 
     public List<Map<String,Object>> getDatos(){
