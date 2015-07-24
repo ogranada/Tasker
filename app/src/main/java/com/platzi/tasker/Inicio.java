@@ -8,6 +8,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,22 +22,37 @@ import java.util.Map;
 public class Inicio extends ActionBarActivity {
 
     private RecyclerView lista;
+    private TareasAdapter adaptador;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inicio);
+        Firebase.setAndroidContext(this);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
         this.lista = (RecyclerView) findViewById(R.id.lvTareas);
-        this.lista.setAdapter(new TareasAdapter(this, getDatos()));
-
+        adaptador = new TareasAdapter(this);
+        this.lista.setAdapter(adaptador);
+        getDatos();
         this.lista.setLayoutManager(layoutManager);
     }
 
-    public List<Map<String,Object>> getDatos(){
+    public  void getDatos(){
+        Firebase myFirebaseRef = new Firebase("https://taskerapp.firebaseio.com/");
+        myFirebaseRef.child("tasks").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                Map<Object, Map<String, Object>> data = (Map<Object, Map<String, Object>>) snapshot.getValue();
+                System.out.println(data);
+                adaptador.setDatos(data);
+                adaptador.notifyDataSetChanged();
+            }
+            @Override public void onCancelled(FirebaseError error) { }
+        });
+        /*
         List<Map<String, Object>> datos = new ArrayList<>();
         for(int contador=1;contador<=10;contador++){
             Map<String, Object> m = new HashMap<>();
@@ -42,6 +62,7 @@ public class Inicio extends ActionBarActivity {
             datos.add(m);
         }
         return datos;
+        */
     }
 
     @Override
